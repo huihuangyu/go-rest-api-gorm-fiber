@@ -9,6 +9,29 @@ import (
 	"github.com/huihuangyu/go-rest-api-gorm-fiber/internal/comment"
 )
 
+// GetComment - retrives a comment from db by ID
+func (h *Handler) GetComment(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	i, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		sendErrorResponse(w, "Unable to parse UINT from ID", err)
+		return
+	}
+
+	comment, err := h.Service.GetComment(uint(i))
+	if err != nil {
+		sendErrorResponse(w, "Error Retrieving Comment By ID", err)
+		return
+	}
+
+	if err := sendOkResponse(w, comment); err != nil {
+		panic(err)
+	}
+}
+
 // GetAllComments - retrieves all comments from the comment service
 func (h *Handler) GetAllComments(w http.ResponseWriter, r *http.Request) {
 
